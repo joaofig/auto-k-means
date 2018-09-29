@@ -1,9 +1,15 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import random
+
+from sklearn.datasets.samples_generator import make_blobs
 
 from KEstimators import PhamDimovNguyen
 from KEstimators import AsankaPerera
+from KEstimators import SecondDerivative
+from KEstimators import Radius
+from KEstimators import ReciprocalDeltaLog
 
 
 def load_data_1024():
@@ -41,25 +47,58 @@ def load_HTRU_2():
 
 
 def load_data():
-    return load_dim2()
+    clusters = random.randint(2, 15)
+    print('K={0}'.format(clusters))
+    X, y = make_blobs(n_samples=100*clusters,
+                      centers=clusters,
+                      cluster_std=4,
+                      n_features=2,
+                      center_box=(-100.0, 100.0))
+                      #random_state=0)
+    df = pd.DataFrame(data=X, columns=['x', 'y'])
+    return df
 
+
+from sklearn.cluster import MiniBatchKMeans
+from sklearn.cluster import KMeans
+
+
+def calculate_s_k(X, k):
+    km = KMeans(n_clusters=k).fit(X)
+    return km.inertia_
 
 
 def run():
-    pdn_estimator = PhamDimovNguyen.KEstimator()
+    pdn_estimator = PhamDimovNguyen.KEstimator(calculate_s_k)
     asanka_estimator = AsankaPerera.KEstimator()
+    d2_estimator = SecondDerivative.KEstimator()
+    r_estimator = Radius.KEstimator()
+    rdl_estimator = ReciprocalDeltaLog.KEstimator(calculate_s_k)
 
     df = load_data()
+    s_k = dict()
+    dim = len(df.columns)
 
-    asanka_estimator.fit(df, tolerance=1e-4)
+    for k in range(1, 51):
+        s_k[k] = calculate_s_k(df, k)
+        # print(s_k[k])
+
+    # r_estimator.fit(df)
+    # print('Radius  : {0}'.format(r_estimator.K))
+
+    # d2_estimator.fit(df)
+    # print('Deriv2 : {0}'.format(d2_estimator.K))
+    #
+    asanka_estimator.fit_s_k(s_k, tolerance=1e-3)
     print('Asanka : {0}'.format(asanka_estimator.K))
-
-    pdn_estimator.fit(df, max_k=30)
+    #
+    pdn_estimator.fit_s_k(s_k, max_k=40, dim=dim)
     print('PhamDN : {0}'.format(pdn_estimator.K))
 
-    # f_k = calculate_f_k(df, max_k=30)
+    rdl_estimator.fit_s_k(s_k, max_k=40)
+    print('Riddle : {0}'.format(rdl_estimator.K))
+    #
     fig, ax1 = plt.subplots()
-    # ax1.plot(range(1, len(f_k) + 1), f_k)
     ax1.scatter(df.x, df.y)
     plt.show()
 

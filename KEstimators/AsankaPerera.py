@@ -8,7 +8,8 @@ class KEstimator:
     def __init__(self):
         self.K = 0
 
-    def calculate_s_k(self, X, k):
+    @staticmethod
+    def calculate_s_k(X, k):
         km = MiniBatchKMeans(n_clusters=k, random_state=42).fit(X)
         return km.inertia_  # -km.score(df) #
 
@@ -26,6 +27,34 @@ class KEstimator:
 
         for k in range(1, len(X) + 1):
             sk1 = self.calculate_s_k(X, k)
+            s_k_list.append(sk1)
+            if k > 2 and abs(sk0 - sk1) < tolerance:
+                break
+            sk0 = sk1
+
+        s_k = np.array(s_k_list)
+        x0 = 1
+        y0 = s_k[0]
+
+        x1 = len(s_k)
+        y1 = 0
+
+        for k in range(1, len(s_k)):
+            dist = self.distance_to_line(k, s_k[k-1], x0, y0, x1, y1)
+            if dist > max_distance:
+                max_distance = dist
+            else:
+                self.K = k - 1
+                break
+
+    def fit_s_k(self, s_k, tolerance=1e-3):
+        """Fits the value of K using the s_k series"""
+        max_distance = -1
+        s_k_list = list()
+        sk0 = 0
+
+        for k in s_k:
+            sk1 = s_k[k]
             s_k_list.append(sk1)
             if k > 2 and abs(sk0 - sk1) < tolerance:
                 break
