@@ -2,8 +2,11 @@ import math
 
 
 class KEstimator:
-    """Estimates the correct value for K using the reciprocal delta log rule"""
-    def __init__(self, cluster_fn):
+    """
+    Riddle K-estimator.
+    Estimates the correct value for K using the reciprocal delta log rule.
+    """
+    def __init__(self, cluster_fn=None):
         self.K = 0
         self.cluster = cluster_fn
         self.s_k = dict()
@@ -24,6 +27,7 @@ class KEstimator:
         return self.K
 
     def fit_s_k(self, s_k, max_k=50):
+        """Fits the value of K using the s_k series"""
         r_k = dict()
         max_val = float('-inf')
 
