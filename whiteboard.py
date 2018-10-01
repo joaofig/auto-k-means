@@ -89,7 +89,7 @@ def run():
     # d2_estimator.fit(df)
     # print('Deriv2 : {0}'.format(d2_estimator.K))
     #
-    asanka_estimator.fit_s_k(s_k, tolerance=1e-3)
+    asanka_estimator.fit_s_k(s_k, tolerance=1e-4)
     print('Asanka : {0}'.format(asanka_estimator.K))
     #
     pdn_estimator.fit_s_k(s_k, max_k=40, dim=dim)

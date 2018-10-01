@@ -49,7 +49,7 @@ class KEstimator:
 
     def fit_s_k(self, s_k, tolerance=1e-3):
         """Fits the value of K using the s_k series"""
-        max_distance = -1
+        max_distance = float('-inf')
         s_k_list = list()
         sk0 = 0
 
@@ -71,6 +71,4 @@ class KEstimator:
             dist = self.distance_to_line(k, s_k[k-1], x0, y0, x1, y1)
             if dist > max_distance:
                 max_distance = dist
-            else:
-                self.K = k - 1
-                break
+                self.K = k
