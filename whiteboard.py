@@ -47,7 +47,7 @@ from KEstimators import RiddleTorch
 
 
 def load_data():
-    clusters = 1 # random.randint(1, 20)
+    clusters = random.randint(1, 20)
     cluster_std = random.uniform(0.5, 8)
     print('K={0}'.format(clusters))
     X, y = make_blobs(n_samples=200*clusters,
