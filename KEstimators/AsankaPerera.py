@@ -47,6 +47,7 @@ class KEstimator:
             else:
                 self.K = k - 1
                 break
+        return self
 
     def fit_s_k(self, s_k, tolerance=1e-3):
         """Fits the value of K using the s_k series"""
@@ -78,3 +79,4 @@ class KEstimator:
             else:
                 self.K = k - 1
                 break
+        return self

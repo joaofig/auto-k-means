@@ -37,6 +37,8 @@ class KEstimator:
             dim = len(X.columns)
         elif isinstance(X, np.ndarray):
             dim = X.shape[1]
+        else:
+            print(type(X))
 
         for k in range(1, max_k + 1):
             i = k - 1
@@ -65,4 +67,4 @@ class KEstimator:
             self.K = np.argmin(f_k) + 1
         else:
             self.K = 1
-        return self.K
+        return self
